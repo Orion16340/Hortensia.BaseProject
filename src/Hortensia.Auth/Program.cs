@@ -2,7 +2,6 @@ using Microsoft.Extensions.Hosting;
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Hortensia.Core;
-using Hortensia.Auth.ExempleDI;
 using Microsoft.AspNetCore.Hosting;
 
 namespace Hortensia.Auth
@@ -12,10 +11,9 @@ namespace Hortensia.Auth
         static void Main(string[] args)
         {
             Console.Title = "Hortensia.Auth";
-
             CreateHostBuilder(args).Build();
 
-            ServiceLocator.Provider.GetService<Exemple>().Start();
+            ServiceLocator.Provider.GetService<LifeTime>().Start();
 
             while (true)
                 Console.ReadLine();

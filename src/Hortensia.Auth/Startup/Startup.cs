@@ -1,5 +1,6 @@
-using Hortensia.Auth.ExempleDI;
+using Hortensia.Auth.Network;
 using Hortensia.Core;
+using Hortensia.ORM;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -13,7 +14,9 @@ namespace Hortensia.Auth
         {
             services
                 .AddCoreInfrastructure()
-                .AddSingleton<Exemple>();
+                .AddORMInfrastructure()
+                .AddSingleton<AuthServer>()
+                .AddSingleton<LifeTime>();
 
             ServiceLocator.Provider = services.BuildServiceProvider();
         };

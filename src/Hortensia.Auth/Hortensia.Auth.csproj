@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hortensia.Core\Hortensia.Core.csproj" />
+    <ProjectReference Include="..\Hortensia.ORM\Hortensia.ORM.csproj" />
+    <ProjectReference Include="..\Hortensia.Synchronizer\Hortensia.Synchronizer.csproj" />
   </ItemGroup>
 
 </Project>

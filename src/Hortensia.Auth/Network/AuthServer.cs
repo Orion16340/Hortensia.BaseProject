@@ -2,14 +2,14 @@
 using Hortensia.Core;
 using Microsoft.Extensions.Configuration;
 
-namespace Hortensia.Auth.ExempleDI
+namespace Hortensia.Auth.Network
 {
-    public class Exemple
+    public class AuthServer
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
 
-        public Exemple(ILogger logger, IConfiguration configuration)
+        public AuthServer(ILogger logger, IConfiguration configuration)
         {
             _logger = logger;
             _configuration = configuration;

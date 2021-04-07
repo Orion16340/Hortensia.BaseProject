@@ -4,4 +4,9 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Hortensia.ORM\Hortensia.ORM.csproj" />
+    <ProjectReference Include="..\Hortensia.Protocol\Hortensia.Protocol.csproj" />
+  </ItemGroup>
+
 </Project>

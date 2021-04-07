@@ -6,7 +6,7 @@ namespace Hortensia.Core.Threads.Timers
     {
         public double Interval { get; set; }
         public TimerTypeEntry Type { get; set; }
-        public bool AutoReset { get; set; }
+        public bool AutoReset { get; set; } = true;
 
         public int GetTime()
         {
