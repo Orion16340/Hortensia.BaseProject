@@ -29,7 +29,7 @@ namespace Hortensia.ORM.Tables.IO
         public DatabaseReader(Type type)
         {
             this.Type = type;
-            var definition = ServiceLocator.Provider.GetService<TableManager>().GetDefinition(type);
+            var definition = ServiceLocator.Provider.GetService<ITableManager>().GetDefinition(type);
             this.Properties = definition.Properties;
             this.TableName = definition.TableAttribute.TableName;
             this.Elements = definition.ContainerValue;
@@ -59,7 +59,7 @@ namespace Hortensia.ORM.Tables.IO
                 {
                     Properties[i].SetValue(data, obj[i]);
                 }
-                ServiceLocator.Provider.GetService<DatabaseManager>().UseConnection().Close();
+                ServiceLocator.Provider.GetService<IDatabaseManager>().UseConnection().Close();
                 return data;
             }
             catch (Exception ex)
@@ -164,8 +164,8 @@ namespace Hortensia.ORM.Tables.IO
 
             if (result.ToLower() == "y")
             {
-                ServiceLocator.Provider.GetService<DatabaseManager>().DropTableIfExists(Type);
-                ServiceLocator.Provider.GetService<DatabaseManager>().CreateTableIfNotExists(Type);
+                ServiceLocator.Provider.GetService<IDatabaseManager>().DropTableIfExists(Type);
+                ServiceLocator.Provider.GetService<IDatabaseManager>().CreateTableIfNotExists(Type);
                 ReadTable(connection, parameter);
             }
             else if (result.ToLower() == "n")
@@ -226,7 +226,7 @@ namespace Hortensia.ORM.Tables.IO
         public static IList Read(Type type, string condition)
         {
             DatabaseReader reader = new DatabaseReader(type);
-            reader.ReadTable(ServiceLocator.Provider.GetService<DatabaseManager>().UseConnection(), string.Format(TableConverter.GetOperation(DatabaseOperation.SELECT), reader.TableName, condition));
+            reader.ReadTable(ServiceLocator.Provider.GetService<IDatabaseManager>().UseConnection(), string.Format(TableConverter.GetOperation(DatabaseOperation.SELECT), reader.TableName, condition));
             return reader.Elements;
 
         }
@@ -234,7 +234,7 @@ namespace Hortensia.ORM.Tables.IO
         public static T ReadFirst<T>(string fieldName, string fieldValue) where T : IRecord
         {
             DatabaseReader reader = new DatabaseReader(typeof(T));
-            return (T)reader.ReadFirst(ServiceLocator.Provider.GetService<DatabaseManager>().UseConnection(), string.Format("{0}='{1}'", fieldName, fieldValue));
+            return (T)reader.ReadFirst(ServiceLocator.Provider.GetService<IDatabaseManager>().UseConnection(), string.Format("{0}='{1}'", fieldName, fieldValue));
         }
     }
 }

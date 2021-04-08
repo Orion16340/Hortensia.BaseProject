@@ -10,7 +10,15 @@ using Hortensia.Core;
 
 namespace Hortensia.ORM
 {
-    public class SaveManager
+    public interface ISaveManager
+    {
+        void AddElement(IRecord element);
+        void RemoveElement(IRecord element);
+        void Save();
+        void UpdateElement(IRecord element);
+    }
+
+    public class SaveManager : ISaveManager
     {
         private ConcurrentDictionary<Type, SynchronizedCollection<IRecord>> _newElements = new();
         private ConcurrentDictionary<Type, SynchronizedCollection<IRecord>> _updateElements = new();
@@ -82,7 +90,7 @@ namespace Hortensia.ORM
 
         public void Save()
         {
-            ServiceLocator.Provider.GetService<BackupManager>().Backup();
+            ServiceLocator.Provider.GetService<IBackupManager>().Backup();
             ServiceLocator.Provider.GetService<ILogger>().LogDatabase("Save Started !");
 
             var types = _removeElements.Keys.ToList();
@@ -95,7 +103,7 @@ namespace Hortensia.ORM
                 {
                     try
                     {
-                        ServiceLocator.Provider.GetService<TableManager>().GetWriter(type).Use(elements.ToArray(), DatabaseAction.Remove);
+                        ServiceLocator.Provider.GetService<ITableManager>().GetWriter(type).Use(elements.ToArray(), DatabaseAction.Remove);
                         _removeElements[type] = new SynchronizedCollection<IRecord>(_removeElements[type].Skip(elements.Count));
                     }
                     catch (Exception e)
@@ -104,7 +112,7 @@ namespace Hortensia.ORM
                     }
                 }
 
-                ServiceLocator.Provider.GetService<BackupManager>().Backup();
+                ServiceLocator.Provider.GetService<IBackupManager>().Backup();
             }
 
             types = _newElements.Keys.ToList();
@@ -118,7 +126,7 @@ namespace Hortensia.ORM
                 {
                     try
                     {
-                        ServiceLocator.Provider.GetService<TableManager>().GetWriter(type).Use(elements.ToArray(), DatabaseAction.Add);
+                        ServiceLocator.Provider.GetService<ITableManager>().GetWriter(type).Use(elements.ToArray(), DatabaseAction.Add);
                         _newElements[type] = new SynchronizedCollection<IRecord>(_newElements[type].Skip(elements.Count));
                     }
                     catch (Exception e)
@@ -139,7 +147,7 @@ namespace Hortensia.ORM
                 {
                     try
                     {
-                        ServiceLocator.Provider.GetService<TableManager>().GetWriter(type).Use(elements.ToArray(), DatabaseAction.Update);
+                        ServiceLocator.Provider.GetService<ITableManager>().GetWriter(type).Use(elements.ToArray(), DatabaseAction.Update);
                         _updateElements[type] = new SynchronizedCollection<IRecord>(_updateElements[type].Skip(elements.Count));
                     }
                     catch (Exception e)

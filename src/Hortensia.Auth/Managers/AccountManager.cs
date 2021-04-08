@@ -13,10 +13,10 @@ namespace Hortensia.Auth.Managers
     public class AccountManager
     {
         public List<AccountRecord> Accounts => AccountRecord.Accounts;
-        private readonly DatabaseManager _databaseManager;
+        private readonly IDatabaseManager _databaseManager;
         private readonly ILogger _logger;
 
-        public AccountManager(ILogger logger, DatabaseManager databaseManager)
+        public AccountManager(ILogger logger, IDatabaseManager databaseManager)
         {
             _logger = logger;
             _databaseManager = databaseManager;

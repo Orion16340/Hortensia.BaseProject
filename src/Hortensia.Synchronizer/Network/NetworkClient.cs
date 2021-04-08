@@ -16,7 +16,7 @@ namespace Hortensia.Synchronizer.Network
     {
         public readonly ILogger _logger;
         private readonly IFrameManager _frameManager;
-        private readonly NetworkOptions _options;
+        private readonly INetworkOptions _options;
 
         public Socket Socket { get; private set; }
         public IPEndPoint EndPoint => Socket.RemoteEndPoint as IPEndPoint;

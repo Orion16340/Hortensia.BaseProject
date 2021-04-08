@@ -1,8 +1,6 @@
 ﻿
 using Hortensia.Core;
 using Hortensia.Synchronizer.Network;
-using Hortensia.Synchronizer.Parameters;
-using Microsoft.Extensions.Configuration;
 
 namespace Hortensia.Auth.Network
 {

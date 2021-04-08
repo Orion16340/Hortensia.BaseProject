@@ -12,7 +12,7 @@ namespace Hortensia.Synchronizer.Network
 {
     public abstract class NetworkServer : IDisposable
     {
-        private readonly NetworkOptions _options;
+        private readonly INetworkOptions _options;
         public readonly ILogger _logger;
         public IPEndPoint EndPoint { get; private set; }
         public Socket Socket { get; private set; }
@@ -21,7 +21,7 @@ namespace Hortensia.Synchronizer.Network
 
         protected NetworkServer(ILogger logger)
         {
-            _options = ServiceLocator.Provider.GetService<NetworkOptions>();
+            _options = ServiceLocator.Provider.GetService<INetworkOptions>();
             _logger = logger;
             Clients = new();
 

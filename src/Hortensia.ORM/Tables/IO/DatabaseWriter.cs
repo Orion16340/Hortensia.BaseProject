@@ -54,7 +54,7 @@ namespace Hortensia.ORM.Tables.IO
         public DatabaseWriter(Type type)
         {
             this.Type = type;
-            var definition = ServiceLocator.Provider.GetService<TableManager>().GetDefinition(type);
+            var definition = ServiceLocator.Provider.GetService<ITableManager>().GetDefinition(type);
             this.AddProperties = GetAddProperties(type);
             this.UpdateProperties = GetUpdateProperties(type);
             this.TableName = definition.TableAttribute.TableName;
@@ -85,7 +85,7 @@ namespace Hortensia.ORM.Tables.IO
 
         private void AddElements(IRecord[] elements)
         {
-            var command = new MySqlCommand(string.Empty, ServiceLocator.Provider.GetService<DatabaseManager>().UseConnection());
+            var command = new MySqlCommand(string.Empty, ServiceLocator.Provider.GetService<IDatabaseManager>().UseConnection());
 
             List<string> final = new List<string>();
 
@@ -128,7 +128,7 @@ namespace Hortensia.ORM.Tables.IO
             }
 
 
-            var command = new MySqlCommand(string.Empty, ServiceLocator.Provider.GetService<DatabaseManager>().UseConnection());
+            var command = new MySqlCommand(string.Empty, ServiceLocator.Provider.GetService<IDatabaseManager>().UseConnection());
 
             List<string> final = new List<string>();
 
@@ -173,7 +173,7 @@ namespace Hortensia.ORM.Tables.IO
             {
                 var commandString = string.Format(TableConverter.GetOperation(DatabaseOperation.REMOVE), TableName, PrimaryProperty.Name, PrimaryProperty.GetValue(element));
 
-                using (var command = new MySqlCommand(commandString, ServiceLocator.Provider.GetService<DatabaseManager>().UseConnection()))
+                using (var command = new MySqlCommand(commandString, ServiceLocator.Provider.GetService<IDatabaseManager>().UseConnection()))
                 {
                     command.ExecuteNonQuery();
                 }
@@ -246,35 +246,35 @@ namespace Hortensia.ORM.Tables.IO
 
         public static void Update<T>(T item) where T : IRecord
         {
-            ServiceLocator.Provider.GetService<TableManager>().GetWriter(typeof(T)).Use(new IRecord[] { item }, DatabaseAction.Update);
+            ServiceLocator.Provider.GetService<ITableManager>().GetWriter(typeof(T)).Use(new IRecord[] { item }, DatabaseAction.Update);
         }
 
         public static void Update<T>(IEnumerable<T> items) where T : IRecord
         {
-            ServiceLocator.Provider.GetService<TableManager>().GetWriter(typeof(T)).Use(items.Cast<IRecord>().ToArray(), DatabaseAction.Update);
+            ServiceLocator.Provider.GetService<ITableManager>().GetWriter(typeof(T)).Use(items.Cast<IRecord>().ToArray(), DatabaseAction.Update);
         }
 
         public static void Insert<T>(T item) where T : IRecord
         {
-            ServiceLocator.Provider.GetService<TableManager>().GetWriter(typeof(T)).Use(new IRecord[] { item }, DatabaseAction.Add);
+            ServiceLocator.Provider.GetService<ITableManager>().GetWriter(typeof(T)).Use(new IRecord[] { item }, DatabaseAction.Add);
         }
         public static void Insert<T>(IEnumerable<T> items) where T : IRecord
         {
-            ServiceLocator.Provider.GetService<TableManager>().GetWriter(typeof(T)).Use(items.Cast<IRecord>().ToArray(), DatabaseAction.Add);
+            ServiceLocator.Provider.GetService<ITableManager>().GetWriter(typeof(T)).Use(items.Cast<IRecord>().ToArray(), DatabaseAction.Add);
         }
 
         public static void Remove<T>(T item) where T : IRecord
         {
-            ServiceLocator.Provider.GetService<TableManager>().GetWriter(typeof(T)).Use(new IRecord[] { item }, DatabaseAction.Remove);
+            ServiceLocator.Provider.GetService<ITableManager>().GetWriter(typeof(T)).Use(new IRecord[] { item }, DatabaseAction.Remove);
         }
         public static void Remove<T>(IEnumerable<T> items) where T : IRecord
         {
-            ServiceLocator.Provider.GetService<TableManager>().GetWriter(typeof(T)).Use(items.Cast<IRecord>().ToArray(), DatabaseAction.Remove);
+            ServiceLocator.Provider.GetService<ITableManager>().GetWriter(typeof(T)).Use(items.Cast<IRecord>().ToArray(), DatabaseAction.Remove);
 
         }
         public static void CreateTable(Type type)
         {
-            ServiceLocator.Provider.GetService<DatabaseManager>().CreateTableIfNotExists(type);
+            ServiceLocator.Provider.GetService<IDatabaseManager>().CreateTableIfNotExists(type);
         }
     }
 }

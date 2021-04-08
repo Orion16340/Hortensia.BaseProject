@@ -1,7 +1,6 @@
 ﻿using Hortensia.Synchronizer.Commands;
 using Hortensia.Synchronizer.Parameters;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace Hortensia.Synchronizer.Extensions
 {
@@ -19,8 +18,8 @@ namespace Hortensia.Synchronizer.Extensions
                 MaxConnectionsPairIP = 8
             };
 
-            services.AddSingleton(options);
-            services.AddSingleton<ConsoleCommandsManager>();
+            services.AddSingleton<INetworkOptions>(options);
+            services.AddSingleton<IConsoleCommandsManager, ConsoleCommandsManager>();
 
             return services;
         }

@@ -19,17 +19,42 @@ using MySQLBackupNetCore;
 
 namespace Hortensia.ORM
 {
-    public class DatabaseManager
+    public interface IDatabaseManager
+    {
+        IDatabaseManager CloseConnection();
+        void CreateAllTablesIfNotExists();
+        void CreateTableIfNotExists(Type type);
+        void CreateTableIfNotExists<T>() where T : IRecord;
+        void DeleteTable(string tableName);
+        void DeleteTable<T>() where T : IRecord;
+        void DropAllTablesIfExists();
+        void DropTableIfExists(string tableName);
+        void DropTableIfExists(Type type);
+        void DropTableIfExists<T>() where T : IRecord;
+        IDatabaseManager ExecuteNonQuery(DatabaseOperation operation, params object[] args);
+        IDatabaseManager InitializeAutoSave(TimerConfigurationEntry configuration);
+        IDatabaseManager InitializeBackup(string directory);
+        IDatabaseManager InitializeDatabase(DatabaseConfiguration configuration, Assembly repositoryAssembly);
+        IDatabaseManager LoadTable<T>() where T : IRecord;
+        IDatabaseManager LoadTables();
+        T Query<T>(string fieldName, string fieldValue) where T : IRecord;
+        IDatabaseManager RegisterTable<T>() where T : IRecord;
+        IDatabaseManager Set();
+        IDatabaseManager StartBackup(string filePath);
+        MySqlConnection UseConnection();
+    }
+
+    public class DatabaseManager : IDatabaseManager
     {
         public static ReaderWriterLockSlim SyncRoot = new();
         private MySqlConnection Connection { get; set; }
-        public List<Type> Tables { get; private set; }
-        public IContextHandler IOTaskPool { get; private set; }
+        private List<Type> Tables { get; set; }
+        private IContextHandler IOTaskPool { get; set; }
 
         public DatabaseManager(IContextHandler pool)
             => IOTaskPool = pool;
 
-        public DatabaseManager InitializeDatabase(DatabaseConfiguration configuration, Assembly repositoryAssembly)
+        public IDatabaseManager InitializeDatabase(DatabaseConfiguration configuration, Assembly repositoryAssembly)
         {
             if (Connection != null)
                 throw new Exception("There is already an instance of DatabaseManager.");
@@ -40,15 +65,15 @@ namespace Hortensia.ORM
             return this;
         }
 
-        public DatabaseManager RegisterTable<T>() where T : IRecord
+        public IDatabaseManager RegisterTable<T>() where T : IRecord
         {
             Tables.Add(typeof(T));
             return this;
         }
 
-        public DatabaseManager Set()
+        public IDatabaseManager Set()
         {
-            ServiceLocator.Provider.GetService<TableManager>().Initialize(Tables.ToArray());
+            ServiceLocator.Provider.GetService<ITableManager>().Initialize(Tables.ToArray());
             return this;
         }
 
@@ -65,28 +90,28 @@ namespace Hortensia.ORM
             return Connection;
         }
 
-        public DatabaseManager CloseConnection()
+        public IDatabaseManager CloseConnection()
         {
             Connection.Close();
 
             return this;
         }
 
-        public DatabaseManager InitializeBackup(string directory)
+        public IDatabaseManager InitializeBackup(string directory)
         {
-            ServiceLocator.Provider.GetService<BackupManager>().Initialize(directory);
+            ServiceLocator.Provider.GetService<IBackupManager>().Initialize(directory);
             return this;
         }
 
-        public DatabaseManager InitializeAutoSave(TimerConfigurationEntry configuration)
+        public IDatabaseManager InitializeAutoSave(TimerConfigurationEntry configuration)
         {
-            IOTaskPool.ExecutePeriodically(ServiceLocator.Provider.GetService<SaveManager>().Save, configuration);
+            IOTaskPool.ExecutePeriodically(ServiceLocator.Provider.GetService<ISaveManager>().Save, configuration);
             IOTaskPool.Start();
 
             return this;
         }
 
-        public DatabaseManager StartBackup(string filePath)
+        public IDatabaseManager StartBackup(string filePath)
         {
             try
             {
@@ -107,7 +132,7 @@ namespace Hortensia.ORM
             return this;
         }
 
-        public DatabaseManager ExecuteNonQuery(DatabaseOperation operation, params object[] args)
+        public IDatabaseManager ExecuteNonQuery(DatabaseOperation operation, params object[] args)
         {
             SyncRoot.EnterWriteLock();
 
@@ -117,7 +142,7 @@ namespace Hortensia.ORM
                 using var command = new MySqlCommand(query, Connection);
                 command.ExecuteNonQuery();
             }
-            catch(MySqlException ex)
+            catch (MySqlException ex)
             {
                 ServiceLocator.Provider.GetService<ILogger>().LogError(ex.Message);
             }
@@ -127,7 +152,7 @@ namespace Hortensia.ORM
             return this;
         }
 
-        public DatabaseManager LoadTables()
+        public IDatabaseManager LoadTables()
         {
             var orderedTables = new Type[Tables.Count()];
 
@@ -135,7 +160,7 @@ namespace Hortensia.ORM
 
             foreach (var tableType in Tables)
             {
-                var definition = ServiceLocator.Provider.GetService<TableManager>().GetDefinition(tableType);
+                var definition = ServiceLocator.Provider.GetService<ITableManager>().GetDefinition(tableType);
                 var attribute = definition.TableAttribute;
 
                 if (attribute.Load)
@@ -168,7 +193,7 @@ namespace Hortensia.ORM
 
             return this;
         }
-        private DatabaseManager LoadTable(Type type)
+        private IDatabaseManager LoadTable(Type type)
         {
             var reader = new DatabaseReader(type);
             var tableName = reader.TableName;
@@ -179,7 +204,7 @@ namespace Hortensia.ORM
 
             return this;
         }
-        public DatabaseManager LoadTable<T>() where T : IRecord
+        public IDatabaseManager LoadTable<T>() where T : IRecord
         {
             LoadTable(typeof(T));
 
@@ -197,7 +222,7 @@ namespace Hortensia.ORM
         {
             foreach (var type in Tables)
             {
-                var definition = ServiceLocator.Provider.GetService<TableManager>().GetDefinition(type);
+                var definition = ServiceLocator.Provider.GetService<ITableManager>().GetDefinition(type);
                 TableAttribute attribute = definition.TableAttribute;
                 DropTableIfExists(attribute.TableName);
             }
@@ -208,16 +233,16 @@ namespace Hortensia.ORM
         }
         public void DropTableIfExists(Type type)
         {
-            var definition = ServiceLocator.Provider.GetService<TableManager>().GetDefinition(type);
+            var definition = ServiceLocator.Provider.GetService<ITableManager>().GetDefinition(type);
             DropTableIfExists(definition.TableAttribute.TableName);
         }
         public void DropTableIfExists<T>() where T : IRecord
         {
-            DropTableIfExists(ServiceLocator.Provider.GetService<TableManager>().GetDefinition(typeof(T)).TableAttribute.TableName);
+            DropTableIfExists(ServiceLocator.Provider.GetService<ITableManager>().GetDefinition(typeof(T)).TableAttribute.TableName);
         }
         public void DeleteTable<T>() where T : IRecord
         {
-            var definition = ServiceLocator.Provider.GetService<TableManager>().GetDefinition(typeof(T));
+            var definition = ServiceLocator.Provider.GetService<ITableManager>().GetDefinition(typeof(T));
             DeleteTable(definition.TableAttribute.TableName);
         }
         public void DeleteTable(string tableName)
@@ -226,7 +251,7 @@ namespace Hortensia.ORM
         }
         public void CreateTableIfNotExists(Type type)
         {
-            var definition = ServiceLocator.Provider.GetService<TableManager>().GetDefinition(type);
+            var definition = ServiceLocator.Provider.GetService<ITableManager>().GetDefinition(type);
 
             string tableName = definition.TableAttribute.TableName;
 

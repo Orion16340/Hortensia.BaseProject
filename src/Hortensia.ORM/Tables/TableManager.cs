@@ -5,7 +5,16 @@ using System.Collections.Generic;
 
 namespace Hortensia.ORM.Tables
 {
-    public class TableManager
+    public interface ITableManager
+    {
+        void AddToContainer(IRecord element);
+        TableDefinitions GetDefinition(Type type);
+        DatabaseWriter GetWriter(Type type);
+        void Initialize(Type[] tableTypes);
+        void RemoveFromContainer(IRecord element);
+    }
+
+    public class TableManager : ITableManager
     {
         private readonly Dictionary<Type, TableDefinitions> _TableDefinitions = new();
 

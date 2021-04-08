@@ -14,54 +14,54 @@ namespace Hortensia.ORM
     {
         public static void AddElement<T>(this T table) where T : IRecord
         {
-            ServiceLocator.Provider.GetService<SaveManager>().AddElement(table);
-            ServiceLocator.Provider.GetService<TableManager>().AddToContainer(table);
+            ServiceLocator.Provider.GetService<ISaveManager>().AddElement(table);
+            ServiceLocator.Provider.GetService<ITableManager>().AddToContainer(table);
         }
         public static void RemoveElement<T>(this T table) where T : IRecord
         {
-            ServiceLocator.Provider.GetService<SaveManager>().RemoveElement(table);
-            ServiceLocator.Provider.GetService<TableManager>().RemoveFromContainer(table);
+            ServiceLocator.Provider.GetService<ISaveManager>().RemoveElement(table);
+            ServiceLocator.Provider.GetService<ITableManager>().RemoveFromContainer(table);
         }
         public static void UpdateElement<T>(this T table) where T : IRecord
         {
-            ServiceLocator.Provider.GetService<SaveManager>().UpdateElement(table);
+            ServiceLocator.Provider.GetService<ISaveManager>().UpdateElement(table);
         }
         public static void AddInstantElement<T>(this T table) where T : IRecord
         {
-            ServiceLocator.Provider.GetService<TableManager>().GetWriter(typeof(T)).Use(new IRecord[] { table }, DatabaseAction.Add);
-            ServiceLocator.Provider.GetService<TableManager>().AddToContainer(table);
+            ServiceLocator.Provider.GetService<ITableManager>().GetWriter(typeof(T)).Use(new IRecord[] { table }, DatabaseAction.Add);
+            ServiceLocator.Provider.GetService<ITableManager>().AddToContainer(table);
         }
         public static void AddInstantElements(this IEnumerable<IRecord> tables, Type type)
         {
-            ServiceLocator.Provider.GetService<TableManager>().GetWriter(type).Use(tables.ToArray(), DatabaseAction.Add);
+            ServiceLocator.Provider.GetService<ITableManager>().GetWriter(type).Use(tables.ToArray(), DatabaseAction.Add);
 
             foreach (var table in tables)
             {
-                ServiceLocator.Provider.GetService<TableManager>().AddToContainer(table);
+                ServiceLocator.Provider.GetService<ITableManager>().AddToContainer(table);
             }
         }
         public static void UpdateInstantElement<T>(this T table) where T : IRecord
         {
-            ServiceLocator.Provider.GetService<TableManager>().GetWriter(typeof(T)).Use(new IRecord[] { table }, DatabaseAction.Update);
+            ServiceLocator.Provider.GetService<ITableManager>().GetWriter(typeof(T)).Use(new IRecord[] { table }, DatabaseAction.Update);
         }
         public static void UpdateInstantElements(this IEnumerable<IRecord> records, Type type)
         {
-            ServiceLocator.Provider.GetService<TableManager>().GetWriter(type).Use(records.ToArray(), DatabaseAction.Update);
+            ServiceLocator.Provider.GetService<ITableManager>().GetWriter(type).Use(records.ToArray(), DatabaseAction.Update);
         }
 
         public static void RemoveInstantElement<T>(this T table) where T : IRecord
         {
-            ServiceLocator.Provider.GetService<TableManager>().GetWriter(typeof(T)).Use(new IRecord[] { table }, DatabaseAction.Remove);
-            ServiceLocator.Provider.GetService<TableManager>().RemoveFromContainer(table);
+            ServiceLocator.Provider.GetService<ITableManager>().GetWriter(typeof(T)).Use(new IRecord[] { table }, DatabaseAction.Remove);
+            ServiceLocator.Provider.GetService<ITableManager>().RemoveFromContainer(table);
 
         }
         public static void RemoveInstantElements(this IEnumerable<IRecord> tables, Type type)
         {
-            ServiceLocator.Provider.GetService<TableManager>().GetWriter(type).Use(tables.ToArray(), DatabaseAction.Remove);
+            ServiceLocator.Provider.GetService<ITableManager>().GetWriter(type).Use(tables.ToArray(), DatabaseAction.Remove);
 
             foreach (var table in tables)
             {
-                ServiceLocator.Provider.GetService<TableManager>().RemoveFromContainer(table);
+                ServiceLocator.Provider.GetService<ITableManager>().RemoveFromContainer(table);
             }
         }
 
@@ -86,10 +86,10 @@ namespace Hortensia.ORM
             var database = new DatabaseManager(databasePool);
 
             services
-                    .AddSingleton<TableManager>()
-                    .AddSingleton<DatabaseManager>(database)
-                    .AddSingleton<BackupManager>()
-                    .AddSingleton<SaveManager>();
+                    .AddSingleton<ITableManager, TableManager>()
+                    .AddSingleton<IDatabaseManager>(database)
+                    .AddSingleton<IBackupManager, BackupManager>()
+                    .AddSingleton<ISaveManager, SaveManager>();
 
             return services;
         }

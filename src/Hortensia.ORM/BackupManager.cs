@@ -6,7 +6,13 @@ using Hortensia.Core;
 
 namespace Hortensia.ORM
 {
-    public class BackupManager
+    public interface IBackupManager
+    {
+        void Backup();
+        void Initialize(string directory);
+    }
+
+    public class BackupManager : IBackupManager
     {
         private const string BackupFileExtension = ".sql";
 
@@ -35,7 +41,7 @@ namespace Hortensia.ORM
             try
             {
                 var date = DateTime.Now.ToFileNameDate();
-                ServiceLocator.Provider.GetService<DatabaseManager>().StartBackup(BackupDirectory + "/" + date + BackupFileExtension);
+                ServiceLocator.Provider.GetService<IDatabaseManager>().StartBackup(BackupDirectory + "/" + date + BackupFileExtension);
                 ServiceLocator.Provider.GetService<ILogger>().LogDatabase($"Dump on <{date}>");
             }
             catch (Exception ex)

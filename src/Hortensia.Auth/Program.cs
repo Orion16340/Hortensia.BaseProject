@@ -10,7 +10,6 @@ namespace Hortensia.Auth
     {
         static void Main(string[] args)
         {
-            Console.Title = "Hortensia.Auth";
             CreateHostBuilder(args).Build();
 
             ServiceLocator.Provider.GetService<LifeTime>().Start();

@@ -10,6 +10,7 @@ using Hortensia.Synchronizer.Records.Accounts;
 using Hortensia.Synchronizer.Records.World;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Hortensia.Auth
@@ -19,12 +20,12 @@ namespace Hortensia.Auth
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly AuthServer _authServer;
-        private readonly DatabaseManager _database;
-        private readonly SaveManager _saveManager;
+        private readonly IDatabaseManager _database;
+        private readonly ISaveManager _saveManager;
         private readonly IFrameManager _frameManager;
-        private readonly ConsoleCommandsManager _consoleCommandsManager;
+        private readonly IConsoleCommandsManager _consoleCommandsManager;
 
-        public LifeTime(ILogger logger, IConfiguration configuration, AuthServer authServer, DatabaseManager databaseManager, SaveManager saveManager, IFrameManager frameManager, ConsoleCommandsManager consoleCommandsManager)
+        public LifeTime(ILogger logger, IConfiguration configuration, AuthServer authServer, IDatabaseManager databaseManager, ISaveManager saveManager, IFrameManager frameManager, IConsoleCommandsManager consoleCommandsManager)
         {
             _logger = logger;
             _configuration = configuration;
@@ -39,11 +40,18 @@ namespace Hortensia.Auth
 
         public void Start()
         {
+            var watch = new Stopwatch();
+            watch.Start();
+
+            LoggerConsole.Initialize("Auth");
+
             var databaseConfig = _configuration.GetSection("DatabaseConfiguration").Get<DatabaseConfiguration>();
 
             _frameManager
                 .InitializeTypes(typeof(RoleEnum).Assembly)
                 .InitializeMessages(typeof(RoleEnum).Assembly, typeof(AuthServer).Assembly);
+
+            _consoleCommandsManager.Initialize(typeof(AuthServer).Assembly);
 
             _database
                 .InitializeDatabase(databaseConfig, typeof(DatabaseManager).Assembly)
@@ -57,8 +65,8 @@ namespace Hortensia.Auth
                 .Set()
                 .LoadTables();
 
-            _consoleCommandsManager.Initialize(typeof(AuthServer).Assembly);
-
+            watch.Stop();
+            _logger.LogInformation($"AuthServer load elapsed in {watch.ElapsedMilliseconds}");
             _authServer.Run();
 
             _consoleCommandsManager.ReadCommand();
@@ -70,7 +78,6 @@ namespace Hortensia.Auth
             _saveManager.Save();
             _authServer.Clients.FindAndAction(x => x.Dispose());
             _authServer.Dispose();
-            Thread.Sleep(5000);
         }
     }
 }
