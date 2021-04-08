@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Hortensia.Framing\Hortensia.Framing.csproj" />
     <ProjectReference Include="..\Hortensia.ORM\Hortensia.ORM.csproj" />
     <ProjectReference Include="..\Hortensia.Protocol\Hortensia.Protocol.csproj" />
   </ItemGroup>

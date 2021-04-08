@@ -13,7 +13,7 @@ namespace Hortensia.Synchronizer.Records
         public static List<Account> Accounts = new();
 
         [Primary]
-        public int Id { get; }
+        public int Id { get; set; }
 
         public string Username { get; set; }
         public string Password { get; set; }

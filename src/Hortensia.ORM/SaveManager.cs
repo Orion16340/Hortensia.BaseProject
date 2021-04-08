@@ -82,6 +82,9 @@ namespace Hortensia.ORM
 
         public void Save()
         {
+            ServiceLocator.Provider.GetService<BackupManager>().Backup();
+            ServiceLocator.Provider.GetService<ILogger>().LogDatabase("Save Started !");
+
             var types = _removeElements.Keys.ToList();
             foreach (var type in types)
             {
@@ -145,6 +148,8 @@ namespace Hortensia.ORM
                     }
                 }
             }
+
+            ServiceLocator.Provider.GetService<ILogger>().LogDatabase("Save Ended !");
         }
     }
 }

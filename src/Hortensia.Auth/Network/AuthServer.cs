@@ -1,23 +1,32 @@
 ﻿
 using Hortensia.Core;
+using Hortensia.Synchronizer.Network;
+using Hortensia.Synchronizer.Parameters;
 using Microsoft.Extensions.Configuration;
 
 namespace Hortensia.Auth.Network
 {
-    public class AuthServer
+    public class AuthServer : NetworkServer
     {
-        private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
-
-        public AuthServer(ILogger logger, IConfiguration configuration)
+        public AuthServer(ILogger logger) : base(logger)
         {
-            _logger = logger;
-            _configuration = configuration;
-        }
+            base.ServerStarted += () =>
+            {
+                _logger.LogInformation($"AuthServer started at {this}");
+            };
 
-        public void Start()
-        {
-            _logger.LogInformation(_configuration["Hortensia"]);
+            base.ServerFailedToStart += (ex) =>
+            {
+                _logger.LogError($"AuthServer failed to start : {ex}");
+            };
+
+            base.SocketConnected += (socket) =>
+            {
+                var client = new AuthClient(socket);
+                Clients.Add(client);
+
+                _logger.LogInformation($"{client} connected to AuthServer");
+            };
         }
     }
 }

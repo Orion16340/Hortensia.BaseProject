@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hortensia.Auth", "src\Horte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hortensia.World", "src\Hortensia.World\Hortensia.World.csproj", "{43C25A46-D3D8-4538-BE4F-53ABA863D20A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hortensia.Framing", "src\Hortensia.Framing\Hortensia.Framing.csproj", "{22DD165F-A71A-45CD-9B8E-12DECD3DA439}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{43C25A46-D3D8-4538-BE4F-53ABA863D20A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43C25A46-D3D8-4538-BE4F-53ABA863D20A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43C25A46-D3D8-4538-BE4F-53ABA863D20A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22DD165F-A71A-45CD-9B8E-12DECD3DA439}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22DD165F-A71A-45CD-9B8E-12DECD3DA439}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22DD165F-A71A-45CD-9B8E-12DECD3DA439}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22DD165F-A71A-45CD-9B8E-12DECD3DA439}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +75,7 @@ Global
 		{5B1A0661-5A60-433D-8C5A-C211338BBCBE} = {31F6BBC5-DB15-4EC8-A1EC-47CAB321CB66}
 		{D18F0C67-CDEC-4B55-8023-BB6F81919B01} = {31F6BBC5-DB15-4EC8-A1EC-47CAB321CB66}
 		{43C25A46-D3D8-4538-BE4F-53ABA863D20A} = {31F6BBC5-DB15-4EC8-A1EC-47CAB321CB66}
+		{22DD165F-A71A-45CD-9B8E-12DECD3DA439} = {C33797A5-A181-4B92-9218-F5B94776C40B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5D7BED02-C7EB-49E7-9492-A5902DF84E67}
