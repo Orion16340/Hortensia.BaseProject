@@ -66,11 +66,6 @@ namespace Hortensia.Synchronizer.Network
             if (Socket != null)
             {
                 OnServerStoping();
-
-                Socket.Shutdown(SocketShutdown.Both);
-                Socket.Close();
-                Socket.Dispose();
-                Socket = null;
             }
         }
 

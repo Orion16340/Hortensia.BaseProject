@@ -150,9 +150,6 @@ namespace Hortensia.Core.Extensions
             return list;
         }
 
-        public static long DynamicPop<T>(this List<T> data) where T : class
-             => data.Count == 0 ? 1 : data.Count + 1;
-
         public static void FindAndAction<T>(this IEnumerable<T> data, Action<T> action) where T : class
         {
             foreach (var item in data)

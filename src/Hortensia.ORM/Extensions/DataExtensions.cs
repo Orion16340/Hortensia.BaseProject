@@ -65,7 +65,7 @@ namespace Hortensia.ORM
             }
         }
 
-        public static long DynamicPop<T>(this List<T> data) where T : IRecord
+        public static int DynamicPop<T>(this List<T> data) where T : IRecord
              => data.Count == 0 ? 1 : data.Count + 1;
 
         public static void EachData<T>(this List<T> data, Action<T> action) where T : IRecord

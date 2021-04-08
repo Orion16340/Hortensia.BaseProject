@@ -14,9 +14,6 @@ namespace Hortensia.Auth
             CreateHostBuilder(args).Build();
 
             ServiceLocator.Provider.GetService<LifeTime>().Start();
-
-            while (true)
-                Console.ReadLine();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args)

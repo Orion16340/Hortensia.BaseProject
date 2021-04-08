@@ -1,4 +1,5 @@
-﻿using Hortensia.Synchronizer.Parameters;
+﻿using Hortensia.Synchronizer.Commands;
+using Hortensia.Synchronizer.Parameters;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -6,7 +7,7 @@ namespace Hortensia.Synchronizer.Extensions
 {
     public static class SynchronizerExtensions
     {
-        public static IServiceCollection ConfigureNetwork(this IServiceCollection services)
+        public static IServiceCollection AddSynchronizerInfrastructure(this IServiceCollection services)
         {
             var options = new NetworkOptions
             {
@@ -19,6 +20,7 @@ namespace Hortensia.Synchronizer.Extensions
             };
 
             services.AddSingleton(options);
+            services.AddSingleton<ConsoleCommandsManager>();
 
             return services;
         }

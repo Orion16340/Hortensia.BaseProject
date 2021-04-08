@@ -3,12 +3,12 @@ using Hortensia.Framing;
 using Hortensia.Framing.IO;
 using Hortensia.Framing.Network;
 using Hortensia.Synchronizer.Parameters;
-using Hortensia.Synchronizer.Records;
 using System;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using Microsoft.Extensions.DependencyInjection;
+using Hortensia.Synchronizer.Records.Accounts;
 
 namespace Hortensia.Synchronizer.Network
 {
@@ -23,7 +23,7 @@ namespace Hortensia.Synchronizer.Network
         public string IP => EndPoint.Address.ToString();
         public bool Connected => Socket != null && Socket.Connected;
 
-        public Account Account { get; set; }
+        public AccountRecord Account { get; set; }
 
         public NetworkClient(Socket socket)
         {

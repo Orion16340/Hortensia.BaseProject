@@ -35,7 +35,7 @@ namespace Hortensia.ORM
             try
             {
                 var date = DateTime.Now.ToFileNameDate();
-                ServiceLocator.Provider.GetService<DatabaseManager>().StartBackup(BackupDirectory + date + BackupFileExtension);
+                ServiceLocator.Provider.GetService<DatabaseManager>().StartBackup(BackupDirectory + "/" + date + BackupFileExtension);
                 ServiceLocator.Provider.GetService<ILogger>().LogDatabase($"Dump on <{date}>");
             }
             catch (Exception ex)

@@ -29,16 +29,13 @@ namespace Hortensia.ORM
         public DatabaseManager(IContextHandler pool)
             => IOTaskPool = pool;
 
-        public DatabaseManager InitializeDatabase(DatabaseConfiguration configuration, Assembly repositoryAssembly, bool init)
+        public DatabaseManager InitializeDatabase(DatabaseConfiguration configuration, Assembly repositoryAssembly)
         {
             if (Connection != null)
                 throw new Exception("There is already an instance of DatabaseManager.");
 
             Connection = new MySqlConnection(configuration.ToString());
             Tables = Array.FindAll(repositoryAssembly.GetTypes(), x => x.GetInterface("IRecord") != null).ToList();
-            
-            if (init)
-                ServiceLocator.Provider.GetService<TableManager>().Initialize(Tables.ToArray());
 
             return this;
         }
@@ -46,6 +43,11 @@ namespace Hortensia.ORM
         public DatabaseManager RegisterTable<T>() where T : IRecord
         {
             Tables.Add(typeof(T));
+            return this;
+        }
+
+        public DatabaseManager Set()
+        {
             ServiceLocator.Provider.GetService<TableManager>().Initialize(Tables.ToArray());
             return this;
         }

@@ -1,3 +1,4 @@
+using Hortensia.Auth.Managers;
 using Hortensia.Auth.Network;
 using Hortensia.Core;
 using Hortensia.Framing;
@@ -19,9 +20,10 @@ namespace Hortensia.Auth
                 .AddCoreInfrastructure()
                 .AddORMInfrastructure()
                 .AddFramingInfrastructure()
-                .ConfigureNetwork()
+                .AddSynchronizerInfrastructure()
                 .AddSingleton<AuthServer>()
-                .AddSingleton<LifeTime>();
+                .AddSingleton<LifeTime>()
+                .AddSingleton<AccountManager>();
 
             ServiceLocator.Provider = services.BuildServiceProvider();
         };
