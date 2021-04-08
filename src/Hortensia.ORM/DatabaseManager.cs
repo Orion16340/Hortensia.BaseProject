@@ -54,6 +54,8 @@ namespace Hortensia.ORM
 
         public MySqlConnection UseConnection()
         {
+            Connection.Close();
+
             if (!Connection.Ping())
             {
                 Connection.Close();
@@ -182,6 +184,13 @@ namespace Hortensia.ORM
             LoadTable(typeof(T));
 
             return this;
+        }
+
+        public T Query<T>(string fieldName, string fieldValue) where T : IRecord
+        {
+            var reader = new DatabaseReader(typeof(T));
+            var where = $"{fieldName}='{fieldValue}'";
+            return (T)reader.ReadFirst(UseConnection(), where);
         }
 
         public void DropAllTablesIfExists()

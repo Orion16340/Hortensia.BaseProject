@@ -1,9 +1,6 @@
 ﻿using Hortensia.Auth.Network;
 using Hortensia.Core;
-using Hortensia.Core.Extensions;
-using Hortensia.Core.Threads;
 using Hortensia.ORM;
-using Hortensia.ORM.Tables.IO;
 using Hortensia.Protocol.Custom;
 using Hortensia.Synchronizer.Records.Accounts;
 using Hortensia.Synchronizer.Records.World;
@@ -16,13 +13,13 @@ namespace Hortensia.Auth.Managers
     public class AccountManager
     {
         public List<AccountRecord> Accounts => AccountRecord.Accounts;
-        private AsyncRandom _random { get; set; }
+        private readonly DatabaseManager _databaseManager;
         private readonly ILogger _logger;
 
-        public AccountManager(ILogger logger)
+        public AccountManager(ILogger logger, DatabaseManager databaseManager)
         {
-            _random = new();
             _logger = logger;
+            _databaseManager = databaseManager;
         }
 
         public void CreateAccount(string username, string password, RoleEnum role)
@@ -57,22 +54,22 @@ namespace Hortensia.Auth.Managers
 
         public AccountRecord GetAccount(int id)
         {
-            return DatabaseReader.ReadFirst<AccountRecord>("Id", id.ToString());
+            return _databaseManager.Query<AccountRecord>("Id", id.ToString());
         }
 
         public AccountRecord GetAccount(string username)
         {
-            return DatabaseReader.ReadFirst<AccountRecord>("Username", username);
+            return _databaseManager.Query<AccountRecord>("Username", username);
         }
 
         public bool UsernameExists(string username)
         {
-            return DatabaseReader.ReadFirst<AccountRecord>("Username", username) != null;
+            return _databaseManager.Query<AccountRecord>("Username", username) != null;
         }
 
         public bool NicknameExists(string nickname)
         {
-            return DatabaseReader.ReadFirst<AccountRecord>("Nickname", nickname) != null;
+            return _databaseManager.Query<AccountRecord>("Nickname", nickname) != null;
         }
 
         public void AddBanTime(AccountRecord account, int days, int hours, int min, int sec)

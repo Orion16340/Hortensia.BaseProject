@@ -59,7 +59,7 @@ namespace Hortensia.ORM.Tables.IO
                 {
                     Properties[i].SetValue(data, obj[i]);
                 }
-
+                ServiceLocator.Provider.GetService<DatabaseManager>().UseConnection().Close();
                 return data;
             }
             catch (Exception ex)
